@@ -13,11 +13,11 @@
 % -------------------------------- Ponto 6 -> Identificar os utentes de um prestador/especialidade/instituição ---------------------------------
 
 utentesDoPrestador( IdP,R ) :- solucoes( ( IdU,N ), ( cuidado(_,IdU,IdP,_,_,_), utente(IdU,N,_,_) ), L ),
-											multiConjunto( L,R ).
+                               multiConjunto( L,R ).
 
 utentesDaEspecialidade( Esp,R ) :- solucoes( ( IdU,N ), ( prestador(IdP,_,Esp,_), cuidado(_,IdU,IdP,_,_,_), utente(IdU,N,_,_) ), L ),
-											multiConjunto( L,R ).
+                                   multiConjunto( L,R ).
 
 utentesDaInstituicao( Inst,R ) :- solucoes( ( IdU,N ), ( cuidado(_,IdU,_,_,_,I), utente(IdU,N,_,_) ), L ),
-											multiConjunto( L,R ).											
+                                  multiConjunto( L,R ).											
 
