@@ -1,0 +1,111 @@
+%------------Invariantes--------
+
+%-------- Não podem haver ids repetidos -------------
+
++utente( IdU,_,_,_ ) :: solucoes( IdU,utente( IdU,_,_,_ ),L ),
+						comprimento( L,X ),
+						X <= 1.
+
++prestador( IdP,_,_,_ ) :: solucoes( IdP,prestador( IdP,_,_,_ ),L ),
+						comprimento( L,X ),
+						X <= 1.
+
+%--------------- Não se podem adicionar cuidados para os quais não existam utentes/prestadores -------------------
+
++cuidado( _,IdU,_,_,_,_ ) :: solucoes( IdU,utente( IdU,_,_,_ ),L ),
+						comprimento( L,X ),
+						X == 1.
+
++cuidado( _,_,IdP,_,_,_ ) :: solucoes( IdP,prestador( IdP,_,_,_ ),L ),
+						comprimento( L,X ),
+						X == 1.
+
+%--------------- Não se pode adicionar um cuidado prestado numa instituição da qual o prestador não faça parte ---------------
+
++cuidado( _,_,IdP,_,_,_ ) :: solucoes( LI,( prestador( IdP,_,_,_ ),pertence(I,LI) ),L ),
+						comprimento( L,X ),
+						X == 1.
+
+%--------------- Não se pode adicionar um cuidado cujo custo seja negativo ------------------------
+
++cuidado( _,_,_,_,C,_ ) :- C >= 0.
+
+%--------------- Não se pode remover um utente para o qual existam cuidados relativos ---------------
+
+-utente( IdU,_,_,_ ) :: solucoes( D,cuidado(D,IdU,_,_,_,_ ),L ),
+						comprimento( L,X ),
+						X == 0.
+
+
+-prestador( IdP,_,_,_ ) :: solucoes( D,cuidado(D,_,IdP,_,_,_ ),L ),
+						comprimento( L,X ),
+						X == 0.
+
+
+%------------------------- Predicados de inserção -----------------------------------
+
+%---------------- Adicionar utente ------------------------------------
+% adicionarUtente: Id,Nome,Idade,Morada -> {V,F}
+
+adicionarUtente( IdUtente,Nome,Idade,morada(R,L,C) ) :-
+											evolucao( utente( IdUtente,Nome,Idade,Morada( R,L,C ) ) ).
+
+
+%---------------- Adicionar prestador ------------------------------------
+% adicionarPrestador: Id,Nome,Especialidade,ListaInstituicao -> {V,F}
+
+adicionarPrestador( IdPrestador,Nome,Espacialidade,ListaI ) :-
+											evolucao( prestador( IdPrestador,Nome,Especialidade,ListaI ) ).
+
+%---------------- Adicionar cuidado ------------------------------------
+% adicionarCuidado: Data,IdUtente,IdPrestador,Descricao,Custo,Instituicao -> {V,F}
+
+adicionarCuidado( Data,IdUtente,IdPrestador,Descricao,Custo,Instituicao ) :-
+											evolucao( cuidado( Data,IdUtente,IdPrestador,Descricao,Custo,Instituicao ) ).
+
+%------------------------- Predicados de remocao -----------------------------------
+
+%---------------- Remover utente ------------------------------------
+% retirarUtente: Id -> {V,F}
+
+retirarUtente( IdUtente ) :-
+					inevolucao( utente( IdUtente,_,_,_ ) ).
+
+
+%---------------- Remover prestador ------------------------------------
+% retirarPrestador: Id -> {V,F}
+
+retirarPrestador( IdPrestador ) :-
+							inevolucao( prestador( IdPrestador,_,_,_ ) ).
+
+%---------------- Remover cuidado ------------------------------------
+% ratirarCuidado: Data,IdUtente,IdPrestador -> {V,F}
+
+retirarCuidado( Data,IdUtente,IdPrestador ) :-
+											inevolucao( cuidado( Data,IdUtente,IdPrestador,_,_,_ ) ).  % ver isto, pois podemos ter vários na mesma data
+
+
+%--------------------------Identificar utentes ---------------------------------------
+
+%---------- Por Id ---------------------
+% utenteId: Id,R -> {V,F}
+
+utenteID( Id,R ) :- solucoes( utente( Id,_,_,_ ),utente( Id,_,_,_ ),R ).
+
+
+%------------- Por Nome -----------
+% utenteNome: Nome,R -> {V,F}
+utenteNome( N,R ) :- solucoes( utente( _,N,_,_ ),utente( _,N,_,_ ),R ).
+
+%----------- Por Morada --------------
+% utenteMorada: Tipo(Rua,Localidade ou Cidade), Morada -> {V,F}
+
+utenteMorada( rua,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),utente( _,_,_,morada( M,_,_ ) ),R ).
+utenteMorada( localidade,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),utente( _,_,_,morada( _,M,_ ) ),R ).
+utenteMorada( cidade,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),utente( _,_,_,morada( _,_,M ) ),R ).
+
+
+%----------------------------------------- Identificar prestadores a que um utente recorreu
+% prestadoresRecorridosUtente: IdUtente,R -> {V,F}
+prestadoresRecorridosUtente( IdU,R ) :- solucoes( ( IdP,N ),( cuidado( _,IdU,IdP,_,_ ),prestador(IdP,N,_,_) ),L ),
+											multiConjunto( L,R ).
