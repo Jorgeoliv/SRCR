@@ -6,3 +6,7 @@ Coloquem aqui as vossas ideias:
 -> Saber o lucro de uma instituicao
 
 -> Achava interessante fazer tops, alguns se calhar
+
+
+-> E se pusessemos instituição como predicado, tipo como Id,Nome,Cidade e listaDeEspecialidades. Depois podíamos ver os serviços por Cidade e também garantir que o prestador tem a especialidade que pertença à lista de especialidades da instituição
+-> Também podemos permitir adicionar instituições ao prestador e remover (mas ao remover garantir que não tem nenhum cuidado naquela instituição)
