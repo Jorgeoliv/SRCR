@@ -1,0 +1,55 @@
+%% cuidados de saude prestados
+
+%%instituicao
+cuidadosSaudeInstituicao(Inst, R) :-
+	solucoes((D, IDU, IDP, Desc, Cus), cuidado(D, IDU, IDP, Desc, Cus, Inst), R).
+
+%%cidade
+cuidadosSaudeCidade(Cid, R) :-
+	solucoes((D, IDU, IDP, Desc, Cus, I), (utente(IDU, _, _, morada(_, Cid, _)) ,  cuidado(D, IDU, IDP, Desc, Cus, I)), R).
+
+%%Data
+
+comparaData(igual,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H1)) :-
+	A1 == A2,
+	M1 == M2,
+	D1 == D2,
+	H1 == H2.
+comparaData(maior,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H1)) :-
+	A1 > A2.
+comparaData(maior,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H1)) :-
+	A1 == A2,
+	M1 > M2.
+comparaData(maior,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H1)) :-
+	A1 == A2,
+	M1 == M2,
+	D1 > D2.
+comparaData(maior,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H1)) :-
+	A1 == A2,
+	M1 == M2,
+	D1 == D2,
+	H1 > H2.
+comparaData(menor,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H1)) :-
+	A1 < A2.
+comparaData(menor,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H1)) :-
+	A1 == A2,
+	M1 < M2.
+comparaData(menor,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H1)) :-
+	A1 == A2,
+	M1 == M2,
+	D1 < D2.
+comparaData(menor,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H1)) :-
+	A1 == A2,
+	M1 == M2,
+	D1 == D2,
+	H1 < H2.
+
+
+cuidadosSaudeData(igual, Data, R) :-
+	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(igual,D, Data, D))), R).
+cuidadosSaudeData(maior, Data, R) :-
+	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(maior,D, Data, D))), R).
+cuidadosSaudeData(menor, Data, R) :-
+	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(menor,D, Data, D))), R).
+cuidadosSaudeData(entre, Data1, Data2, R) :-
+	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(maior,D, Data1, D)),(comparaData(menor,D, Data2, D))), R).
