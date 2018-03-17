@@ -135,7 +135,7 @@ validaIdade( A ) :- R is A+1,
 +cuidado( _,_,_,_,C,_ ) :: (C >= 0).
 
 %----------------- Não se pode adicionar um cuidado com os campos todos iguais --------------------
-+cuidado( D,IdU,IdP,Desc,C,I ) :: (solucoes( LI,cuidado( D,IdU,IdP,Desc,C,I ),L ),
++cuidado( D,IdU,IdP,Desc,C,I ) :: (solucoes( I,cuidado( D,IdU,IdP,Desc,C,I ),L ),
 						comprimento( L,X ),
 						X == 1).
 
@@ -438,11 +438,7 @@ insereMultiConjunto( E,[(C,N)|L],[(C,N)|R] ) :- E \= C,
 
 %---------------------------------------------------
 % Extensao do predicado solucoes: Termo,Questao,Solucao(ListaQuestao) -> {V,F}
-solucoes( F,S,R ) :- S, 
-					assert( tmp(F) ),
-					fail.
-solucoes( F,S,R ) :- construir( [],R ).
-
+solucoes(X,Y,Z) :- findall(X,Y,Z).
 %---------------------------------------------------
 % Extensao do predicado construir: ListaInicial,ListaFinal -> {V,F}
 construir( L,[F|R] ) :- retract( tmp(F) ),
