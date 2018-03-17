@@ -354,7 +354,7 @@ utentesDaEspecialidade( Esp,R ) :- solucoes( ( IdU,N ), ( prestador(IdP,_,Esp,_)
 
 %---------------------------------------------------
 % Extensao do predicado utentesDaInstituicao: Instituicao, ListaUtente -> {V,F}
-utentesDaInstituicao( Inst,R ) :- solucoes( ( IdU,N ), ( cuidado(_,IdU,_,_,_,I), utente(IdU,N,_,_) ), L ),
+utentesDaInstituicao( Inst,R ) :- solucoes( ( IdU,N ), ( cuidado(_,IdU,_,_,_,Inst), utente(IdU,N,_,_) ), L ),
                                   multiConjunto( L,R ).											
 
 
