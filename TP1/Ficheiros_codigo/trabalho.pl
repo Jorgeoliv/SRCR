@@ -263,7 +263,7 @@ utentePorIdade( >=,I,X ) :- solucoes( (Id,N),(utente(Id,N,Idade,M), Idade >= I),
 
 %----------------------------------------- Identificar prestadores a que um utente recorreu
 % Extensao do predicado prestadoresRecorridosUtente: IdUtente,R -> {V,F}
-prestadoresRecorridosUtente( IdU,R ) :- solucoes( ( IdP,N ),( cuidado( _,IdU,IdP,_,_ ),prestador(IdP,N,_,_) ),L ),
+prestadoresRecorridosUtente( IdU,R ) :- solucoes( ( IdP,N ),( cuidado( _,IdU,IdP,_,_,_ ),prestador(IdP,N,_,_) ),L ),
 											multiConjunto( L,R ).
 %--------------------------------> VER ISTO >---------------------------------------
 
