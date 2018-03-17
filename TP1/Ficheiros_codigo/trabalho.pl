@@ -362,15 +362,15 @@ utentesDaInstituicao( Inst,R ) :- solucoes( ( IdU,N ), ( cuidado(_,IdU,_,_,_,Ins
 
 %---------------------------------------------------
 % Extensao do predicado cuidadosUtente: IdUtente, ListaCuidado -> {V,F}
-cuidadosUtente(IDU,R) :- solucoes((D,IDU,PREST,DESC,CUSTO) , (cuidado(D,IDU,PREST,DESC,CUSTO)),R).
+cuidadosUtente(IdU,R) :- solucoes( (D,IdU,IdP,Desc,C,Inst) , cuidado(D,IdU,IdP,Desc,C,Inst) , R ).
 
 %---------------------------------------------------
 % Extensao do predicado cuidadosInstituicao: Instituicao, ListaCuidado -> {V,F}
-cuidadosInstituicao(Inst,R) :- solucoes(  (D,IDU,PREST,DESC,CUSTO)  , ( prestador(PREST,_,_,Inst) , cuidado(D,IDU,PREST,DESC,CUSTO)), R).
+cuidadosInstituicao(Inst,R) :- solucoes( (D,IdU,IdP,Desc,C)  , cuidado(D,IdU,IdP,Desc,C,Inst), R ).
 
 %---------------------------------------------------
 % Extensao do predicado cuidadosPrestador: IdPrestador, ListaCuidado -> {V,F}
-cuidadosPrestador(Prest,R) :- solucoes( (D,IDU,PREST,DESC,CUSTO)  , cuidado((D,IDU,Prest,DESC,CUSTO))  , R) .
+cuidadosPrestador(IdP,R) :- solucoes( (D,IdU,IdP,Desc,C,Inst)  , cuidado(D,IdU,IdP,Desc,C,Inst)  , R ) .
 
 %-------------------------------- Determinar todas as instituicoes/prestadores a que um utente já recorreu----------------------
 
