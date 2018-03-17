@@ -233,24 +233,24 @@ retirarCuidado( Data,IdUtente,IdPrestador,Descricao,Custo,Instituiao ) :-
 retirarInstituicao( Instituicao ) :-
 							inevolucao( instituicao( Instituicao,_,_,_ ) ).
 
+
 %--------------------------Identificar utentes ---------------------------------------
 
 %---------- Por Id ---------------------
-% Extensao do predicado utenteId: Id,Resposta(Utente) -> {V,F}
+% Extensao do predicado utenteId: IdU,Resposta(Utente) -> {V,F}
 
-utenteID( Id,R ) :- solucoes( utente( Id,_,_,_ ),utente( Id,_,_,_ ),R ).
-
+utenteID( IdU,R ) :- solucoes( (IdU,N,I,M) , utente( IdU,N,I,M ) , R ).
 
 %------------- Por Nome -----------
 % Extensao do predicado utenteNome: Nome,Resposta(ListaUtente) -> {V,F}
-utenteNome( N,R ) :- solucoes( utente( _,N,_,_ ),utente( _,N,_,_ ),R ).
+utenteNome( N,R ) :- solucoes( (IdU,N,I,M) , utente( IdU,N,I,M ) , R ).
 
 %----------- Por Morada --------------
 % Extensao do predicado utenteMorada: Tipo(Rua,Localidade ou Cidade), Morada, Resposta(ListaUtente) -> {V,F}
 
-utenteMorada( rua,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),utente( _,_,_,morada( M,_,_ ) ),R ).
-utenteMorada( localidade,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),utente( _,_,_,morada( _,M,_ ) ),R ).
-utenteMorada( cidade,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),utente( _,_,_,morada( _,_,M ) ),R ).
+utenteMorada( rua,Rua,R ) :- solucoes( ( IdU,N,I,morada( Rua,Loc,Cid ) ) , utente( IdU,N,I,morada( Rua,Loc,Cid ) ) , R ).
+utenteMorada( localidade,Loc,R ) :- solucoes( ( IdU,N,I,morada( Rua,Loc,Cid ) ) , utente( IdU,N,I,morada( Rua,Loc,Cid ) ) , R ).
+utenteMorada( cidade,Cid,R ) :- solucoes( ( IdU,N,I,morada( Rua,Loc,Cid ) ) , utente( IdU,N,I,morada( Rua,Loc,Cid ) ) , R ).
 
 %------------ Por idade --------------------
 % Extensao do predicado utentePorIdade: Relacao(>,<,=,=<,>=), Idade, Resposta(ListaUtente) -> {V,F}
@@ -261,47 +261,40 @@ utentePorIdade( >,I,X ) :- solucoes( (Id,N),(utente(Id,N,Idade,M), Idade > I),X 
 utentePorIdade( =<,I,X ) :- solucoes( (Id,N),(utente(Id,N,Idade,M), Idade =< I),X ).
 utentePorIdade( >=,I,X ) :- solucoes( (Id,N),(utente(Id,N,Idade,M), Idade >= I),X ).
 
-%----------------------------------------- Identificar prestadores a que um utente recorreu
-% Extensao do predicado prestadoresRecorridosUtente: IdUtente,R -> {V,F}
-prestadoresRecorridosUtente( IdU,R ) :- solucoes( ( IdP,N ),( cuidado( _,IdU,IdP,_,_,_ ),prestador(IdP,N,_,_) ),L ),
-											multiConjunto( L,R ).
-%--------------------------------> VER ISTO >---------------------------------------
 
 %------------------------------- Identificar instituicoes prestadoras de cuidados ----------------------------
 % Extensao do predicado instituicoesPrestadoresCuidados: Resposta(ListaInstituicao) -> {V,F}
 
-instituicoesPrestadoresCuidados( R ) :- solucoes( I,cuidado( D,U,P,DE,C,I ),Aux ), multiConjunto( Aux,R ).
-
-%-------------------> VER ISTO <---------------------------------------
-utentesPrestador( P,R ) :- solucoes( (U,N),(cuidado(D,U,P,DE,C),utente(U,N,I,M)),Aux ),  multiConjunto(Aux,R).
+instituicoesPrestadoresCuidados( R ) :- solucoes( I,cuidado( _,_,_,_,_,I ),Aux ), 
+										multiConjunto( Aux,R ).
 
 
-%-------------------------- Cuidados de saude prestados -------------------------------------------------
+%-------------------------- Cuidados de saude prestados ------------------------------------------------- 
 
 %%----------------------------- Por instituicao
 % Extensao do predicado cuidadosSaudeInstituicao: Instituicao, ListaCuidado -> {V,F}
 
 cuidadosSaudeInstituicao(Inst, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus), cuidado(D, IDU, IDP, Desc, Cus, Inst), R).
+	solucoes((Data, IdU, IdP, Desc, Custo), cuidado(Data, IdU, IdP, Desc, Custo, Inst), R).
 
 %%-------------------------------------------- Por cidade
 % Extensao do predicado cuidadosSaudeCidade: Cidade, ListaCuidado -> {V,F}
 cuidadosSaudeCidade(Cid, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus, I), ( cuidado(D, IDU, IDP, Desc, Cus, I),instituicao( I,Cid,_,_ ) ), R).
+	solucoes((Data, IdU, IdP, Desc, Custo, Inst), ( cuidado(Data, IdU, IdP, Desc, Custo, Inst),instituicao( Inst,Cid,_,_ ) ), R).
 
 %%----------------------------------------------- Por Data
 % Extensao do predicado cuidadosSaudeData: Criterio(maior,igual,menor), Data, ListaCuidado -> {V,F}
 cuidadosSaudeData(igual, Data, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(igual,D, Data, D))), R).
+	solucoes((D, IdU, IdP, Desc, Custo, Inst), (cuidado(D, IdU, IdP, Desc, Custo, Inst) , (comparaData(igual,D, Data, D))), R).
 cuidadosSaudeData(maior, Data, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(maior,D, Data, D))), R).
+	solucoes((D, IdU, IdP, Desc, Custo, Inst), (cuidado(D, IdU, IdP, Desc, Custo, Inst) , (comparaData(maior,D, Data, D))), R).
 cuidadosSaudeData(menor, Data, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(menor,D, Data, D))), R).
+	solucoes((D, IdU, IdP, Desc, Custo, Inst), (cuidado(D, IdU, IdP, Desc, Custo, Inst) , (comparaData(menor,D, Data, D))), R).
 
 %------------
 % Extensao do predicado cuidadosSaudeData: Criterio(entre), Data, Data, ListaCuidado -> {V,F}
 cuidadosSaudeData(entre, Data1, Data2, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(maior,D, Data1, D)),(comparaData(menor,D, Data2, D))), R).
+	solucoes((D, IdU, IdP, Desc, Custo, Inst), (cuidado(D, IdU, IdP, Desc, Custo, Inst) , (comparaData(maior,D, Data1, D)),(comparaData(menor,D, Data2, D))), R).
 
 %------------------------------------------------------------
 % Extensao do predicado comparaData: Criterio(maior,menor), Data, Data -> {V,F}
@@ -372,6 +365,7 @@ cuidadosInstituicao(Inst,R) :- solucoes( (D,IdU,IdP,Desc,C)  , cuidado(D,IdU,IdP
 % Extensao do predicado cuidadosPrestador: IdPrestador, ListaCuidado -> {V,F}
 cuidadosPrestador(IdP,R) :- solucoes( (D,IdU,IdP,Desc,C,Inst)  , cuidado(D,IdU,IdP,Desc,C,Inst)  , R ) .
 
+
 %-------------------------------- Determinar todas as instituicoes/prestadores a que um utente já recorreu----------------------
 
 %---------------------------------------------------
@@ -383,6 +377,7 @@ instituicoesRecorridasUtente( IdU,R ) :- solucoes( I,cuidado(_,IdU,_,_,_,I),L ),
 % Extensao do predicado prestadoresRecorridosUtente: IdUtente, ListaPrestador -> {V,F}
 prestadoresRecorridosUtente( IdU,R ) :- solucoes( ( P,NP ),( cuidado( _,IdU,P,_,_,_ ),prestador( P,NP,_,_ ) ),L ),
 											multiConjunto( L,R ).
+
 
 % --------------------------------Total Custo -----------------------------------------------
 
@@ -403,8 +398,8 @@ totalCustoEspecialidade( Esp,C ) :- solucoes( Custo,( cuidado(_,_,P,_,Custo,_),p
 
 %---------------------------------------------------
 % Extensao do predicado utentesMaisCusto: Numero, ListaUtentes -> {V,F}
-utentesMaisCusto(N , R) :-
-	solucoes( ( C,ID,N ),( utente(ID, N, _, _),totalCustoUtente(ID,C) ),L ),
+utentesMaisCusto( N,R) :-
+	solucoes( ( C,ID,No ),( utente(ID, No, _, _),totalCustoUtente(ID,C) ),L ),
 	ordena(L, Rs),
 	take(Rs, N, R).
 
