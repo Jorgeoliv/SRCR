@@ -2,7 +2,7 @@
 % SIST. REPR. CONHECIMENTO E RACIOCINIO - MiEI/3
 
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
-% TP1 - Programacao em logica e inveriantes
+% TP1 - Programacao em logica e invariantes
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
 % SICStus PROLOG: Declaracoes iniciais
 
@@ -50,37 +50,13 @@ cuidado( data( 2018,3,15,20 ),3,3,'curativo',34,'Hospital de Guimaraes' ).
 instituicao( 'Hospital de Braga','Braga','Hospital',['ortopedia'] ).
 instituicao( 'Hospital de Guimaraes','Guimaraes','Hospital',['urologia','neurologia'] ).
 
-
-%------------------------INVARIANTES-----------------------
-
-% Não pode existir mais do que um utente com o mesmo Id
-% mesmo para prestador
-% mesmo talvez para cuidado, com utente e data, prestador e data (se colocarmos horas) num limite de 3
-% nao se pode adicionar cuidados para os quais não existam utentes e prestadores
-
-% não se pode remover utentes e prestadores para os quais existam cuidados
-
 %----------------------------------Data do cuidado é válida---------------------------------------
 
 +cuidado( Data,U,P,Descricao,C,I ) :: (dataValida(Data)).
 
-%----------------------------------Não pode haver mais do que 3 cuidados à mesma hora tanto para o utente como o profissional-----------------
 
-+cuidado(D,U,P,Des,C,I) :: (solucoes((D,P),cuidado(D,Ut,P,Descr,Cus,Ins),L),
-							comprimento(L,X),
-							X<4
-							).
-
-+cuidado(D,U,P,Des,C,I) :: (solucoes((D,U),cuidado(D,U,Pr,Descr,Cus,Ins),L),
-							comprimento(L,X),
-							X<4
-							).
-
-
-validaIdade( A ) :- R is A+1,
-					natural(R).
-
-
+%----------------- ----- --- -- -
+% Extensao do predicado dataValida: Data -> {V,F}
 dataValida( data(A,M,D,H) ) :- 	natural(A),
 							natural(M),
 							natural(D),
@@ -107,6 +83,18 @@ diasValidos( A,2,D ) :- R is A mod 4,
 							D < 30,
 							D > 0. 
 
+%----------------------------------Não pode haver mais do que 3 cuidados à mesma hora tanto para o utente como o profissional-----------------
+
++cuidado(D,U,P,Des,C,I) :: (solucoes((D,P),cuidado(D,Ut,P,Descr,Cus,Ins),L),
+							comprimento(L,X),
+							X=<3
+							).
+
++cuidado(D,U,P,Des,C,I) :: (solucoes((D,U),cuidado(D,U,Pr,Descr,Cus,Ins),L),
+							comprimento(L,X),
+							X=<3
+							).
+
 
 %-------- Não podem haver ids repetidos -------------
 
@@ -117,6 +105,14 @@ diasValidos( A,2,D ) :- R is A mod 4,
 +prestador( IdP,_,_,_ ) :: (solucoes( IdP,prestador( IdP,_,_,_ ),L ),
 						comprimento( L,X ),
 						X =< 1).
+
+%--------- Não pode ter uma idade inválida ----------
++utente( IdU,_,I,_ ) :: ( validadeIdade( I ) ).
+
+%--------------- --- -- -
+% Extensao do predicado validaIdade: Idade -> {V,F}
+validaIdade( A ) :- R is A+1,
+					natural(R).
 
 %--------------- Não se podem adicionar cuidados para os quais não existam utentes/prestadores -------------------
 
@@ -138,7 +134,12 @@ diasValidos( A,2,D ) :- R is A mod 4,
 
 +cuidado( _,_,_,_,C,_ ) :: (C >= 0).
 
-%--------------- Não se pode remover um utente para o qual existam cuidados relativos ---------------
+%----------------- Não se pode adicionar um cuidado com os campos todos iguais --------------------
++cuidado( D,IdU,IdP,Desc,C,I ) :: (solucoes( LI,cuidado( D,IdU,IdP,Desc,C,I ),L ),
+						comprimento( L,X ),
+						X == 1).
+
+%--------------- Não se pode remover um utente/prestador para o qual existam cuidados relativos ---------------
 
 -utente( IdU,_,_,_ ) :: (solucoes( D,cuidado(D,IdU,_,_,_,_ ),L ),
 						comprimento( L,X ),
@@ -153,76 +154,106 @@ diasValidos( A,2,D ) :- R is A mod 4,
 
 +prestador( IDp,_,Esp,LInst ) :: (validaEspecialidadeInstituicao( Esp,LInst )).
 
+%------------------------- ---- -- -
+% Extensao do predicado validaEspecialidadeInstituicao: Especialidade, ListaInstituicao -> {V,F}
 validaEspecialidadeInstituicao( Esp,[] ).
 validaEspecialidadeInstituicao( Esp,[C|L] ) :- instituicao( C,_,_,E ),
 												pertence( Esp,E ),
 												validaEspecialidadeInstituicao( Esp,L ). 
 
+%----------------- Não se pode adicionar prestadores que prestem serviços em instituições que não estejam registadas no sistema ----------
++prestador(ID, _, _, LI) :: validaInstituicao(LI).
 
+%------------------------- ---- -- -
+% Extensao do predicado validaInstituicao: ListaInstituicao -> {V,F}
+validaInstituicao([]).
+validaInstituicao([C|L]) :-
+	instituicao(C, _, _, _),
+	validaInstituicao(L).
+
+%--------------- Não se pode remover uma instituicao para a qual existam prestadores ---------------------
+-instituicao( I,C,T,LE ) :: solucoes( P,( prestador( P,_,_,LI ),pertence( I,LI ) ),L),
+							comprimento( L,X ),
+							X==0.
+
+%--------------- Não se pode remover uma instituicao para a qual existam cuidados ---------------------
+-instituicao( I,C,T,LE ) :: solucoes( P,prestador( _,P,_,_,_,I ),L),
+							comprimento( L,X ),
+							X==0.
 
 %------------------------- Predicados de inserção -----------------------------------
 
 %---------------- Adicionar utente ------------------------------------
-% adicionarUtente: Id,Nome,Idade,Morada -> {V,F}
+% Extensao do predicado adicionarUtente: Id,Nome,Idade,Morada -> {V,F}
 
 adicionarUtente( IdUtente,Nome,Idade,Morada ) :-
 											evolucao( utente( IdUtente,Nome,Idade,Morada ) ).
 
 
 %---------------- Adicionar prestador ------------------------------------
-% adicionarPrestador: Id,Nome,Especialidade,ListaInstituicao -> {V,F}
+% Extensao do predicado adicionarPrestador: Id,Nome,Especialidade,ListaInstituicao -> {V,F}
 
 adicionarPrestador( IdPrestador,Nome,Especialidade,ListaI ) :-
 											evolucao( prestador( IdPrestador,Nome,Especialidade,ListaI ) ).
 
 %---------------- Adicionar cuidado ------------------------------------
-% adicionarCuidado: Data,IdUtente,IdPrestador,Descricao,Custo,Instituicao -> {V,F}
+% Extensao do predicado adicionarCuidado: Data,IdUtente,IdPrestador,Descricao,Custo,Instituicao -> {V,F}
 
 adicionarCuidado( Data,IdUtente,IdPrestador,Descricao,Custo,Instituicao ) :-
 											evolucao( cuidado( Data,IdUtente,IdPrestador,Descricao,Custo,Instituicao ) ).
 
+%---------------- Adicionar instituicao ------------------------------------
+% Extensao do predicado adicionarInstituicao: Nome,Cidade,Tipo,ListaEspecialidade -> {V,F}
+
+adicionarInstituicao( Nome,Cidade,Tipo,ListaEspecialidade ) :-
+											evolucao( instituicao( Nome,Cidade,Tipo,ListaEspecialidade ) ).
+
 %------------------------- Predicados de remocao -----------------------------------
 
 %---------------- Remover utente ------------------------------------
-% retirarUtente: Id -> {V,F}
+% Extensao do predicado retirarUtente: Id -> {V,F}
 
 retirarUtente( IdUtente ) :-
 					inevolucao( utente( IdUtente,_,_,_ ) ).
 
 
 %---------------- Remover prestador ------------------------------------
-% retirarPrestador: Id -> {V,F}
+% Extensao do predicado retirarPrestador: Id -> {V,F}
 
 retirarPrestador( IdPrestador ) :-
 							inevolucao( prestador( IdPrestador,_,_,_ ) ).
 
 %---------------- Remover cuidado ------------------------------------
-% ratirarCuidado: Data,IdUtente,IdPrestador -> {V,F}
+% Extensao do predicado retirarCuidado: Data,IdUtente,IdPrestador,Descricao,Custo,Instituiao -> {V,F}
+retirarCuidado( Data,IdUtente,IdPrestador,Descricao,Custo,Instituiao ) :-
+											inevolucao( cuidado( Data,IdUtente,IdPrestador,Descricao,Custo,Instituiao ) ).
 
-retirarCuidado( Data,IdUtente,IdPrestador ) :-
-											inevolucao( cuidado( Data,IdUtente,IdPrestador,_,_,_ ) ).  % ver isto, pois podemos ter vários na mesma data
-
-
+%---------------- Remover instituicao ------------------------------------
+% Extensao do predicado retirarInstituicao: Nome -> {V,F}
+retirarInstituicao( Instituicao ) :-
+							inevolucao( instituicao( Instituicao,_,_,_ ) ).
 
 %--------------------------Identificar utentes ---------------------------------------
 
 %---------- Por Id ---------------------
-% utenteId: Id,R -> {V,F}
+% Extensao do predicado utenteId: Id,Resposta(Utente) -> {V,F}
 
 utenteID( Id,R ) :- solucoes( utente( Id,_,_,_ ),utente( Id,_,_,_ ),R ).
 
 
 %------------- Por Nome -----------
-% utenteNome: Nome,R -> {V,F}
+% Extensao do predicado utenteNome: Nome,Resposta(ListaUtente) -> {V,F}
 utenteNome( N,R ) :- solucoes( utente( _,N,_,_ ),utente( _,N,_,_ ),R ).
 
 %----------- Por Morada --------------
-% utenteMorada: Tipo(Rua,Localidade ou Cidade), Morada -> {V,F}
+% Extensao do predicado utenteMorada: Tipo(Rua,Localidade ou Cidade), Morada, Resposta(ListaUtente) -> {V,F}
 
 utenteMorada( rua,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),utente( _,_,_,morada( M,_,_ ) ),R ).
 utenteMorada( localidade,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),utente( _,_,_,morada( _,M,_ ) ),R ).
 utenteMorada( cidade,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),utente( _,_,_,morada( _,_,M ) ),R ).
 
+%------------ Por idade --------------------
+Extensao do predicado utentePorIdade: Relacao(>,<,=,=<,>=), Idade, Resposta(ListaUtente) -> {V,F}
 
 utentePorIdade( =,I,X ) :- solucoes( (Id,N),utente(Id,N,I,M),X ).
 utentePorIdade( <,I,X ) :- solucoes( (Id,N),(utente(Id,N,Idade,M), Idade < I),X ).
@@ -231,29 +262,49 @@ utentePorIdade( =<,I,X ) :- solucoes( (Id,N),(utente(Id,N,Idade,M), Idade =< I),
 utentePorIdade( >=,I,X ) :- solucoes( (Id,N),(utente(Id,N,Idade,M), Idade >= I),X ).
 
 %----------------------------------------- Identificar prestadores a que um utente recorreu
-% prestadoresRecorridosUtente: IdUtente,R -> {V,F}
+% Extensao do predicado prestadoresRecorridosUtente: IdUtente,R -> {V,F}
 prestadoresRecorridosUtente( IdU,R ) :- solucoes( ( IdP,N ),( cuidado( _,IdU,IdP,_,_ ),prestador(IdP,N,_,_) ),L ),
 											multiConjunto( L,R ).
+%--------------------------------> VER ISTO >---------------------------------------
 
+%------------------------------- Identificar instituicoes prestadoras de cuidados ----------------------------
+% Extensao do predicado instituicoesPrestadoresCuidados: Resposta(ListaInstituicao) -> {V,F}
 
-instituicoesPrestadoresCuidados( R ) :- solucoes( I,(cuidado(D,U,P,DE,C),prestador(P,N,E,I)),Aux ), multiConjunto(Aux,R).
+instituicoesPrestadoresCuidados( R ) :- solucoes( I,( cuidado( D,U,P,DE,C,I ),Aux ), multiConjunto( Aux,R ).
 
+%-------------------> VER ISTO <---------------------------------------
 utentesPrestador( P,R ) :- solucoes( (U,N),(cuidado(D,U,P,DE,C),utente(U,N,I,M)),Aux ),  multiConjunto(Aux,R).
 
 
-%-------------------------- Ponto 5 -------------------------------------------------
+%-------------------------- Cuidados de saude prestados -------------------------------------------------
 
-%% cuidados de saude prestados
+%%----------------------------- Por instituicao
+% Extensao do predicado cuidadosSaudeInstituicao: Instituicao, ListaCuidado -> {V,F}
 
-%%instituicao
 cuidadosSaudeInstituicao(Inst, R) :-
 	solucoes((D, IDU, IDP, Desc, Cus), cuidado(D, IDU, IDP, Desc, Cus, Inst), R).
 
-%%cidade
+%%-------------------------------------------- Por cidade
+Extensao do predicado cuidadosSaudeCidade: Cidade, ListaCuidado -> {V,F}
 cuidadosSaudeCidade(Cid, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus, I), (utente(IDU, _, _, morada(_, Cid, _)) ,  cuidado(D, IDU, IDP, Desc, Cus, I)), R).
+	solucoes((D, IDU, IDP, Desc, Cus, I), ( cuidado(D, IDU, IDP, Desc, Cus, I),instituicao( I,Cid,_,_ ) ), R).
 
-%%Data
+%%----------------------------------------------- Por Data
+Extensao do predicado cuidadosSaudeData: Criterio(maior,igual,menor), Data, ListaCuidado -> {V,F}
+cuidadosSaudeData(igual, Data, R) :-
+	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(igual,D, Data, D))), R).
+cuidadosSaudeData(maior, Data, R) :-
+	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(maior,D, Data, D))), R).
+cuidadosSaudeData(menor, Data, R) :-
+	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(menor,D, Data, D))), R).
+
+%------------
+% Extensao do predicado cuidadosSaudeData: Criterio(entre), Data, Data, ListaCuidado -> {V,F}
+cuidadosSaudeData(entre, Data1, Data2, R) :-
+	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(maior,D, Data1, D)),(comparaData(menor,D, Data2, D))), R).
+
+%------------------------------------------------------------
+% Extensao do predicado comparaData: Criterio(maior,menor), Data, Data -> {V,F}
 
 comparaData(igual,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H1)) :-
 	A1 == A2,
@@ -290,52 +341,58 @@ comparaData(menor,data(A1, M1, D1, H1), data(A2, M2, D2, H2), data(A1, M1, D1, H
 	H1 < H2.
 
 
-cuidadosSaudeData(igual, Data, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(igual,D, Data, D))), R).
-cuidadosSaudeData(maior, Data, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(maior,D, Data, D))), R).
-cuidadosSaudeData(menor, Data, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(menor,D, Data, D))), R).
-cuidadosSaudeData(entre, Data1, Data2, R) :-
-	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(maior,D, Data1, D)),(comparaData(menor,D, Data2, D))), R).
-
-
-
-% -------------------------------- Ponto 6 -> Identificar os utentes de um prestador/especialidade/instituição ---------------------------------
-
+% -------------------------------- Identificar os utentes de um prestador/especialidade/instituição ---------------------------------
+%---------------------------------------------------
+% Extensao do predicado utentesDoPrestador: IdPrestador, ListaUtente -> {V,F}
 utentesDoPrestador( IdP,R ) :- solucoes( ( IdU,N ), ( cuidado(_,IdU,IdP,_,_,_), utente(IdU,N,_,_) ), L ),
                                multiConjunto( L,R ).
 
+%---------------------------------------------------
+% Extensao do predicado utentesDaEspecialidade: Especialidade, ListaUtente -> {V,F}
 utentesDaEspecialidade( Esp,R ) :- solucoes( ( IdU,N ), ( prestador(IdP,_,Esp,_), cuidado(_,IdU,IdP,_,_,_), utente(IdU,N,_,_) ), L ),
                                    multiConjunto( L,R ).
 
+%---------------------------------------------------
+% Extensao do predicado utentesDaInstituicao: Instituicao, ListaUtente -> {V,F}
 utentesDaInstituicao( Inst,R ) :- solucoes( ( IdU,N ), ( cuidado(_,IdU,_,_,_,I), utente(IdU,N,_,_) ), L ),
                                   multiConjunto( L,R ).											
 
 
-%------------------------------ Ponto 7 ---------------------------------------------------------
+%------------------------------ Identificar cuidados de utente/prestador/instituicao ---------------------------------------------------------
 
+%---------------------------------------------------
+% Extensao do predicado cuidadosUtente: IdUtente, ListaCuidado -> {V,F}
 cuidadosUtente(IDU,R) :- solucoes((D,IDU,PREST,DESC,CUSTO) , (cuidado(D,IDU,PREST,DESC,CUSTO)),R).
 
+%---------------------------------------------------
+% Extensao do predicado cuidadosInstituicao: Instituicao, ListaCuidado -> {V,F}
 cuidadosInstituicao(Inst,R) :- solucoes(  (D,IDU,PREST,DESC,CUSTO)  , ( prestador(PREST,_,_,Inst) , cuidado(D,IDU,PREST,DESC,CUSTO)), R).
 
+%---------------------------------------------------
+% Extensao do predicado cuidadosPrestador: IdPrestador, ListaCuidado -> {V,F}
 cuidadosPrestador(Prest,R) :- solucoes( (D,IDU,PREST,DESC,CUSTO)  , cuidado((D,IDU,Prest,DESC,CUSTO))  , R) .
 
+%-------------------------------- Determinar todas as instituicoes/prestadores a que um utente já recorreu----------------------
 
-
-% predicado Data poderia ser Data(Ano,Mes,Dia,Hora)
-% predicado Morada poderia ser Morada(Rua,Freguesia,Cidade) também se podia por vila e distrito mas acho demais
-
-% -------------------------------- Ponto 8 -> Determinar todas as instituicoes/prestadores a que um utente já recorreu----------------------
-
+%---------------------------------------------------
+% Extensao do predicado instituicoesRecorridasUtente: IdUtente, ListaInstituicao -> {V,F}
 instituicoesRecorridasUtente( IdU,R ) :- solucoes( I,cuidado(_,IdU,_,_,_,I),L ),
 											multiConjunto( L,R ).
 
-% -------------------------------- Ponto 9 -> Total Custo -----------------------------------------------
+%---------------------------------------------------
+% Extensao do predicado prestadoresRecorridosUtente: IdUtente, ListaPrestador -> {V,F}
+prestadoresRecorridosUtente( IdU,R ) :- solucoes( ( P,NP ),( cuidado( _,IdU,P,_,_,_ ),prestador( P,NP,_,_ ) ),L ),
+											multiConjunto( L,R ).
 
+% --------------------------------Total Custo -----------------------------------------------
+
+%---------------------------------------------------
+% Extensao do predicado totalCustoUtente: IdUtente, Custo -> {V,F}
 totalCustoUtente( IdU,C ) :- solucoes( Custo,cuidado(_,IdU,_,_,Custo,_),L ),
 							somaC( L,C ).
 
+%---------------------------------------------------
+% Extensao do predicado totalCustoEspecialidade: Especialidade, Custo -> {V,F}
 totalCustoEspecialidade( Esp,C ) :- solucoes( Custo,( cuidado(_,_,P,_,Custo,_),prestador(P,_,Esp,_) ),L ),
 							somaC( L,C ).
 
@@ -344,46 +401,70 @@ totalCustoEspecialidade( Esp,C ) :- solucoes( Custo,( cuidado(_,_,P,_,Custo,_),p
 
 % ------------------------------------------ Utente Com Mais Custos -----------------------------------------------
 
+%---------------------------------------------------
+% Extensao do predicado utentesMaisCusto: Numero, ListaUtentes -> {V,F}
 utentesMaisCusto(N , R) :-
-	solucoes( ( C,ID ),( utente(ID, _, _, _),totalCustoUtente(ID,C) ),L ),
-	ordenaPar(L, Rs),
+	solucoes( ( C,ID,N ),( utente(ID, N, _, _),totalCustoUtente(ID,C) ),L ),
+	ordena(L, Rs),
 	take(Rs, N, R).
 
 % -------------------------------------------- PREDICADOS AUXILIARES ----------------------------------------------
 
-
+%---------------------------------------------------
+% Extensao do predicado natural: Numero -> {V,F}
 natural( 1 ).
 natural( X ) :- X < 1, !, fail.
 natural( N ) :- R is N-1,
             natural(R).
 
-
+%---------------------------------------------------
+% Extensao do predicado somaC: Lista,Soma -> {V,F}
 somaC( [],0 ).
 somaC( [C|L],R ) :- somaC( L,A ),
 				R is C+A.
 
+%---------------------------------------------------
+% Extensao do predicado multiConjunto: Lista, Lista com pares (ocorrencia,nrOcorrencia) -> {V,F}
 multiConjunto( [],[] ).
 multiConjunto( [C|L], R ) :- multiConjunto(L,A),
 							insereMultiConjunto(C,A,R).
 
-
+%---------------------------------------------------
+% Extensao do predicado insereMultiConjunto: Elemento, Lista, Lista com pares (ocorrencia,nrOcorrencia) -> {V,F}
 insereMultiConjunto( E,[],[(E,1)] ).
 insereMultiConjunto( E,[(E,N)|L],[(E,M)|L] ) :- M is N+1.
 insereMultiConjunto( E,[(C,N)|L],[(C,N)|R] ) :- E \= C,
 								insereMultiConjunto(E,L,R).
 
+%---------------------------------------------------
+% Extensao do predicado solucoes: Termo,Questao,Solucao(ListaQuestao) -> {V,F}
+solucoes( F,S,R ) :- S, 
+					assert( tmp(F) ),
+					fail.
+solucoes( F,S,R ) :- construir( [],R ).
 
-solucoes( X,Y,Z ) :- findall( X,Y,Z ).
+%---------------------------------------------------
+% Extensao do predicado construir: ListaInicial,ListaFinal -> {V,F}
+construir( L,[F|R] ) :- retract( tmp(F) ),
+						construir( L,R ).
+construir( S,S ).
 
 
 %% --------------------------
 %% Ordena uma lista de pares por ordem decrescente
+% Extensao do predicado ordena: Lista,ListaOrdenada -> {V,F}
+ordena([],[]).
+ordena([H|T],L) :- ordena(T,T1), insereOrdenado(H,T1,L).
 
-ordenaPar(L, L).
+%------------ Insere um elemento ordenado numa lista
+% Extensao do predicado insereOrdenado: Elemento,Lista,ListaComElemento -> {V,F}
+insereOrdenado(X,[],[X]).
+insereOrdenado(X,[Y|Ys],[Y|Zs]) :- X @> Y, ins(X,Ys,Zs).
+insereOrdenado(X,[Y|Ys],[X,Y|Ys]) :- X @=< Y.
 
 %% --------------------------
 %% Fica os primeiros n elementos de uma lista
-
+% Extensao do predicado take: Lista,NumeroElementos,ListaComOsNElementos -> {V,F}
 take( [],_,[] ).
 take( C,0,[] ).
 take( [C|L],N,[C|R] ) :-
@@ -406,29 +487,38 @@ comprimento( [C|L],R ) :- comprimento( L,A ),
 
 %---------------------------- Predicados de Evolucao -------------------
 
+%---------------------------------------------------
+% Extensao do predicado evolucao: Termo -> {V,F}
 evolucao( Termo ) :- solucoes( Inv,+Termo::Inv,S ),
 					inserir( Termo ),
 					testar( S ).
 
+%---------------------------------------------------
+% Extensao do predicado inserir: Predicado -> {V,F}
 inserir( P ) :- assert( P ).
 inserir( P ) :- retract( P ), !, fail.
 
 
-
+%---------------------------------------------------
+% Extensao do predicado involucao: Termo -> {V,F}
 inevolucao( Termo ) :- solucoes(Inv,-Termo::Inv,S),
 					remover(Termo),
 					testar(S).
 
 
+%---------------------------------------------------
+% Extensao do predicado remover: Predicado -> {V,F}
 remover( P ) :- retract( P ).
 remover( P ) :- assert( P ), !, fail.
 
+%---------------------------------------------------
+% Extensao do predicado testar: ListaPredicado -> {V,F}
 testar( [] ).
 testar( [X|R] ) :- X,
 				testar( R ).
 
-%-------------------------- Predicado não ----------------
-%-------- nao: Termo -> {V,F}
+%-------------------------- Predicado não - negacao por falha na prova ----------------
+% Extensao do predicado nao: Termo -> {V,F}
 
 nao( T ) :- T, !, fail.
 nao( T ). 
