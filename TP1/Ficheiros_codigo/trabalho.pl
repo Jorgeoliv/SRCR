@@ -450,8 +450,8 @@ ordena([H|T],L) :- ordena(T,T1), insereOrdenado(H,T1,L).
 %------------ Insere um elemento ordenado numa lista
 % Extensao do predicado insereOrdenado: Elemento,Lista,ListaComElemento -> {V,F}
 insereOrdenado(X,[],[X]).
-insereOrdenado(X,[Y|Ys],[Y|Zs]) :- X @> Y, ins(X,Ys,Zs).
-insereOrdenado(X,[Y|Ys],[X,Y|Ys]) :- X @=< Y.
+insereOrdenado(X,[Y|Ys],[X | [Y|Ys] ]) :- X @>= Y.
+insereOrdenado(X,[Y|Ys],[Y|Zs]) :- X @< Y, insereOrdenado(X,Ys,Zs).
 
 %% --------------------------
 %% Fica os primeiros n elementos de uma lista
