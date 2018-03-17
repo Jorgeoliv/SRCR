@@ -172,14 +172,14 @@ validaInstituicao([C|L]) :-
 	validaInstituicao(L).
 
 %--------------- Não se pode remover uma instituicao para a qual existam prestadores ---------------------
--instituicao( I,C,T,LE ) :: solucoes( P,( prestador( P,_,_,LI ),pertence( I,LI ) ),L),
+-instituicao( I,C,T,LE ) :: (solucoes( P,( prestador( P,_,_,LI ),pertence( I,LI ) ),L),
 							comprimento( L,X ),
-							X==0.
+							X==0).
 
 %--------------- Não se pode remover uma instituicao para a qual existam cuidados ---------------------
--instituicao( I,C,T,LE ) :: solucoes( P,prestador( _,P,_,_,_,I ),L),
+-instituicao( I,C,T,LE ) :: (solucoes( P,prestador( _,P,_,_,_,I ),L),
 							comprimento( L,X ),
-							X==0.
+							X==0).
 
 %------------------------- Predicados de inserção -----------------------------------
 
@@ -253,7 +253,7 @@ utenteMorada( localidade,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),uten
 utenteMorada( cidade,M,R ) :- solucoes( utente( _,_,_,morada( M,_,_ ) ),utente( _,_,_,morada( _,_,M ) ),R ).
 
 %------------ Por idade --------------------
-Extensao do predicado utentePorIdade: Relacao(>,<,=,=<,>=), Idade, Resposta(ListaUtente) -> {V,F}
+% Extensao do predicado utentePorIdade: Relacao(>,<,=,=<,>=), Idade, Resposta(ListaUtente) -> {V,F}
 
 utentePorIdade( =,I,X ) :- solucoes( (Id,N),utente(Id,N,I,M),X ).
 utentePorIdade( <,I,X ) :- solucoes( (Id,N),(utente(Id,N,Idade,M), Idade < I),X ).
@@ -270,7 +270,7 @@ prestadoresRecorridosUtente( IdU,R ) :- solucoes( ( IdP,N ),( cuidado( _,IdU,IdP
 %------------------------------- Identificar instituicoes prestadoras de cuidados ----------------------------
 % Extensao do predicado instituicoesPrestadoresCuidados: Resposta(ListaInstituicao) -> {V,F}
 
-instituicoesPrestadoresCuidados( R ) :- solucoes( I,( cuidado( D,U,P,DE,C,I ),Aux ), multiConjunto( Aux,R ).
+instituicoesPrestadoresCuidados( R ) :- solucoes( I,cuidado( D,U,P,DE,C,I ),Aux ), multiConjunto( Aux,R ).
 
 %-------------------> VER ISTO <---------------------------------------
 utentesPrestador( P,R ) :- solucoes( (U,N),(cuidado(D,U,P,DE,C),utente(U,N,I,M)),Aux ),  multiConjunto(Aux,R).
@@ -285,12 +285,12 @@ cuidadosSaudeInstituicao(Inst, R) :-
 	solucoes((D, IDU, IDP, Desc, Cus), cuidado(D, IDU, IDP, Desc, Cus, Inst), R).
 
 %%-------------------------------------------- Por cidade
-Extensao do predicado cuidadosSaudeCidade: Cidade, ListaCuidado -> {V,F}
+% Extensao do predicado cuidadosSaudeCidade: Cidade, ListaCuidado -> {V,F}
 cuidadosSaudeCidade(Cid, R) :-
 	solucoes((D, IDU, IDP, Desc, Cus, I), ( cuidado(D, IDU, IDP, Desc, Cus, I),instituicao( I,Cid,_,_ ) ), R).
 
 %%----------------------------------------------- Por Data
-Extensao do predicado cuidadosSaudeData: Criterio(maior,igual,menor), Data, ListaCuidado -> {V,F}
+% Extensao do predicado cuidadosSaudeData: Criterio(maior,igual,menor), Data, ListaCuidado -> {V,F}
 cuidadosSaudeData(igual, Data, R) :-
 	solucoes((D, IDU, IDP, Desc, Cus, Inst), (cuidado(D, IDU, IDP, Desc, Cus, Inst) , (comparaData(igual,D, Data, D))), R).
 cuidadosSaudeData(maior, Data, R) :-
