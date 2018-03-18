@@ -391,6 +391,21 @@ totalCustoUtente( IdU,C ) :- solucoes( Custo,cuidado(_,IdU,_,_,Custo,_),L ),
 totalCustoEspecialidade( Esp,C ) :- solucoes( Custo,( cuidado(_,_,P,_,Custo,_),prestador(P,_,Esp,_) ),L ),
 							somaC( L,C ).
 
+%---------------------------------------------------
+% Extensao do predicado totalCustoPrestador: IdPrestador, Custo -> {V,F}
+totalCustoPrestador( IdP,C ) :- solucoes( Custo , cuidado(_,_,IdP,_,Custo,_) , L ),
+							somaC( L,C ).
+
+%---------------------------------------------------
+% Extensao do predicado totalCustoPorDatas: Criterio(maior,igual,menor), Data, ListaCuidado -> {V,F}
+totalCustoPorDatas( igual,Data,C ) :- solucoes( Custo , (cuidado(D,_,_,_,Custo,_) , comparaData(igual,D, Data, D)), L), somaC( L,C ).
+totalCustoPorDatas( maior,Data,C ) :- solucoes( Custo , (cuidado(D,_,_,_,Custo,_) , comparaData(maior,D, Data, D)), L), somaC( L,C ).
+totalCustoPorDatas( menor,Data,C ) :- solucoes( Custo , (cuidado(D,_,_,_,Custo,_) , comparaData(menor,D, Data, D)), L), somaC( L,C ).
+
+% Extensao do predicado totalCustoPorDatas: Criterio(entre), Data, Data, ListaCuidado -> {V,F}
+totalCustoPorDatas( entre,Data1,Data2,C ) :- solucoes( Custo , (cuidado(D,_,_,_,Custo,_) , comparaData(maior,D, Data1, D) , comparaData(menor,D, Data2, D)), L), somaC( L,C ).
+
+
 
 % ------------------------------------------ PREDICADOS EXTRA -----------------------------------------------------
 
@@ -402,6 +417,30 @@ utentesMaisCusto( N,R) :-
 	solucoes( ( C,ID,No ),( utente(ID, No, _, _),totalCustoUtente(ID,C) ),L ),
 	ordena(L, Rs),
 	take(Rs, N, R).
+
+
+%--------------------------------------- Identificar instituicao --------------------------------------------
+
+%---------------------------------------------------
+% Extensao do predicado instituicoesPorTipo: Tipo, ListaInstituicoes -> {V,F}
+instituicoesPorTipo( Tipo,R ) :- solucoes( (Inst,Cid,Tipo,Esp) , instituicao(Inst,Cid,Tipo,Esp) , R ).
+
+%---------------------------------------------------
+% Extensao do predicado instituicoesPorCidade: Cidade, ListaInstituicoes -> {V,F}
+instituicoesPorCidade( Cid,R ) :- solucoes( (Inst,Cid,Tipo,Esp) , instituicao(Inst,Cid,Tipo,Esp) , R ).
+
+%---------------------------------------------------
+% Extensao do predicado instituicoesPorEspecialidade: Especialidade, ListaInstituicoes -> {V,F}
+instituicoesPorEspecialidade( Esp,R ) :- solucoes( (Inst,Cid,Tipo) , ( instituicao(Inst,Cid,Tipo,E) , pertence(Esp,E) ) , R ).
+
+
+%---------------------------- Identificar cuidados por tipo de instituicao ----------------------------------
+
+%---------------------------------------------------
+% Extensao do predicado cuidadosPorTipoDeInstituicao: Tipo, ListaCuidados -> {V,F}
+cuidadosPorTipoDeInstituicao( Tipo,R ) :- solucoes( (D,IdU,IdP,Desc,Custo,Inst) , (instituicao(Inst,_,Tipo,_) , cuidado(D,IdU,IdP,Desc,Custo,Inst)) , R ).
+
+
 
 % -------------------------------------------- PREDICADOS AUXILIARES ----------------------------------------------
 
