@@ -1,0 +1,21 @@
+Incerto:
+
+idade
+morada -> campos da morada
+custos
+datas -> campos da data
+no cuidado tbm pode-se n saber o prestador ou a instituição (mas pode-se saber um dos dois e ao saber um dos dois sabemos que os outros estão dentro de um conjuto e valores)
+
+Num conjunto de valores:
+
+o mesmo que o incerto, 
+por exemplo na morada podemos ter: sabemos que é de Braga, mas n sabemos a rua (agr n sei se isto é incerto ou num conjunto)
+
+
+Interito:
+
+certas instituições podem ter informações interditas relativas aos cuidados como a especialidade, ou o prestador ou o custo
+tbm podem ter informações interditas relativas às especialidades que pertencem à instituição mm
+
+certos utentes (por exemplo primeiro ministro ou PR) podem ter informações interditas relativas aos cuidados, como a instituição e o custo
+podem tbm ter informações interditas relativas à morada
