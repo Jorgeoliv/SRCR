@@ -447,8 +447,8 @@ cuidadosPorTipoDeInstituicao( Tipo,R ) :- solucoes( (D,IdU,IdP,Desc,Custo,Inst) 
 %---------------------------------------------------
 % Extensao do predicado natural: Numero -> {V,F}
 natural( 1 ).
-natural( X ) :- X < 1, !, fail.
 natural( N ) :- R is N-1,
+            R > 0,
             natural(R).
 
 %---------------------------------------------------
