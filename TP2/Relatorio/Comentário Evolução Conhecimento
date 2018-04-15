@@ -1,0 +1,10 @@
+Acho que ao inserir conhecimento negativo podíamos fazer uma analogia com o ser humano.
+Por exemplo, nós quando sabemos que uma coisa é verdadeira e nos informam que ela é falsa, não tornamos logo a nossa opinião para falso. Primeiro duvidamos e depois é que mudamos de opinião para falso (na maior parte dos casos, 99%) daí não passarmos de falso para verdadeiro.
+Podemos também referir que existem coisas que no mundo real hoje são verdade e amannhã não o são, no entanto é necessário ter uma relação entre o que é verdade e o que não é, como por exemplo pesos para o que conehcemos e o que nos dizem de novo e misturar tudo com análises estatísticas. Isso não é implementável em PROLOG ou é bastante complexo.
+
+Podemos também dizer que no nosso caso de estudo, quando temos informação verdadeira/falsa essa informação não se vai alterar, à partido por ser um caso de histórico médico e isso. Apenas alteramos nos casos em que temos dúvidas, daí a evolução só ocorrer no conhecimento desconhecido. Podemos também referir que issso não implica que não se possa retirar conhecimento verdadeiro, mas aí é à custa da inevolução e de seguida já podemos ter conhecimento falso desse tipo.
+
+
+
+Em relação à segunda abordagem do desconhecido, acho que podiamos deixar adicionar o negativo.
+Visto que se removessemos o desconhecido, depois ele podia adicionar o verdadeiro para qq valor. Ou pode ser outra abordagem.
