@@ -95,7 +95,7 @@ excecao( cuidado( 5,data( 3,3,2018 ),5,9,'exame',25,'Hospital Privado de Braga' 
 
 
 --------------- Penso que na remocao de prestadores e utentes temos de ter atencao em eles estarem também em cuidados mas n se saber se são mm eles------------------------
--utente( A,N,I,M ) :: ( solucoes( D,( excecao( cuidado( ID,Data,A,P,D,C,I )),Data/=xpto732,A/=xpto732,P/=xpto732,D/=xpto732,C/=xpto732,I/=xpto732 ),L ),
+-utente( A,N,I,M ) :: ( solucoes( D,excecao( cuidado( ID,Data,A,P,D,C,I ) ),L ),
 						comprimento( L,Aux ),
 						Aux == 0
 						).
