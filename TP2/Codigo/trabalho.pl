@@ -33,11 +33,8 @@ excecao( utente( 2,bruno,A,morada( 'Rua do Louro' , 'Caldelas' , 'Guimaraes' ) )
 
 utente( 3,carlos,xpto497,xpto336 ).
 nuloD( xpto497 ).
-excecao( utente( A,C,_,D ) ) :- utente( A,C,B,D ),
-                                nuloD( B ).
+excecao( utente( A,C,_,_ ) ) :- utente( A,C,xpto497,xpto336 ).
 nuloI( xpto336 ).
-excecao( utente( A,B,C,_ ) ) :- utente( A,B,C,D ),
-								nuloI( D ).
 
 +utente( O,B,C,D ) :: ( solucoes( N,( utente( 3,N,X,T ),nao( nuloI( T ) ) ),L ),
 					comprimento( L,Aux ),
@@ -50,16 +47,14 @@ utente( 4,duarte,35,morada( 'Rua dos Loiros' , 'Caldelas' , 'Guimaraes' ) ).
 
 utente( 5,elisabete,26,morada( 'Rua da Ajuda' , 'Vila Nova' , 'Guimaraes' ) ).
 
-utente( 6,filipa,xpto001,morada('Rua do Emigrante','Azurém','Braga') ).
+utente( 6,filipa,xpto001,morada('Rua do Emigrante','Azurem','Braga') ).
 nuloD( xpto001 ).
-excecao( utente(A,B,_,D) ) :- utente( A,C,B,D ),
-							  nuloD( B ).
+excecao( utente(A,B,_,D) ) :- utente( A,B,xpto001,D ).
 
 
 utente( 7,gisela,33,xpto002 ).
 nuloD( xpto002 ).
-excecao( utente(A,B,C,_) ) :- utente(A,B,C,D),
-							  nuloD( D ).
+excecao( utente(A,B,C,_) ) :- utente(A,B,C,xpto002).
 
 
 excecao( utente( 8,helder,Idade,morada('Rua do Azevinho','Braga','Braga') ) ) :-
@@ -82,8 +77,7 @@ excecao( utente( 12,joaquim,I,morada( 'Rua do Limoeiro' , 'Amais' , 'Viana do Ca
 	I =< 80.
 
 utente( 13,marcelo,45,xpto115 ).
-excecao( utente( ID,N,I,L ) ) :-
-	utente( ID,N,I,xpto115 ).
+excecao( utente( ID,N,I,L ) ) :- utente( ID,N,I,xpto115 ).
 nuloI(xpto115).
 
 +utente( ID,N,I,L ) :: ( solucoes( ID,( utente( 13,N,I,M ),nao( nuloI(M) ) ),R ),
@@ -115,13 +109,12 @@ prestador( 2,bernardo,ortopedia,'Hospital Privado de Guimaraes' ).
 
 prestador( 3,carla,xpto789,'Hospital de Guimaraes' ).
 nuloD( xpto789 ).
-excecao( prestador( A,C,_,D ) ) :- prestador( A,C,B,D ),
-                                    nuloD( B ).
+excecao( prestador( A,B,_,D ) ) :- prestador( A,B,xpto789,D ).
+
                                     
 prestador( 4,dalila,neurologia,xpto123 ).
 nuloI( xpto123 ).
-excecao( prestador( A,B,C,_ ) ) :- prestador( A,B,C,D ),
-								nuloI( D ).
+excecao( prestador( A,B,C,_ ) ) :- prestador( A,B,C,xpto123 ).
 
 
 +prestador( O,B,C,D ) :: ( solucoes( N,( prestador( 4,N,X,T ),nao( nuloI( T ) ) ),L ),
@@ -141,8 +134,7 @@ excecao( prestador( 7,gabriel,A,'Hospital de Braga' ) ).
 excecao( prestador( 7,gabriel,A,'Hospital de Guimaraes' ) ).
 nuloI(xpto456).
 prestador(7,gabriel,xpto456,X).
-excecao( prestador( A,B,_,D ) ) :-	prestador( A,B,C,D).
-									nuloI( C ).
+excecao( prestador( A,B,_,D ) ) :-	prestador( A,B,xpto456,D).
 
 +prestador( O,B,C,D ) :: ( solucoes( N,( prestador( 6,N,X,T ),nao( nuloI( X ) ) ),L ),
 					comprimento( L,Aux ),
@@ -156,15 +148,14 @@ prestador( 8,henriqueta,cardiologia,'Hospital de Braga' ).
 excecao(prestador(9,iglesias,urologia,'Hospital Privado de Braga')).
 excecao(prestador(9,iglesias,patologia,'Hospital Privado de Braga')).
 
-excecao(prestador(A,B,C,D)) :- prestador(A,B,C,xpto423).
 prestador(10,josefina,patologia,xpto423).
+excecao(prestador(A,B,C,_)) :- prestador(A,B,C,xpto423).
 
 prestador(11,nuria,dermatologia,'Hospital do Porto').
 
 
 prestador( 12,joao,xpto171,'Hospital do Porto' ).
-excecao( prestador( ID,N,E,L ) ) :-
-	prestador( ID,N,xpto171,L ).
+excecao( prestador( ID,N,_,L ) ) :- prestador( ID,N,xpto171,L ).
 nuloI(xpto171).
 
 +prestador( ID,N,E,L ) :: ( solucoes( ID,( prestador( 12,N,I,L ),nao( nuloI(I) ) ),R ),
@@ -174,17 +165,13 @@ nuloI(xpto171).
 
 
 excecao( prestador( 13,julia,neurocirurgia,'Hospital do Porto' ) ).
-
 excecao( prestador( 13,julia,neurocirurgia,'Hospital de Guimaraes' ) ).
-
 excecao( prestador( 13,julia,neurologia,'Hospital do Porto' ) ).
-
 excecao( prestador( 13,julia,neurologia,'Hospital de Guimaraes' ) ).
 
 
 prestador( 14,renato,xpto145,xpto167 ).
-excecao( prestador( ID,N,E,L ) ) :-
-	prestador( ID,N,xpto145,xpto167 ).
+excecao( prestador( ID,N,_,_ ) ) :- prestador( ID,N,xpto145,xpto167 ).
 
 
 -prestador(ID,N,E,I) :-
@@ -206,8 +193,8 @@ cuidado( 2,data( 2,1,2018 ),2,6,'investigacao',xpto444,'Hospital de Braga' ).
 nuloI( xpto444 ).
 excecao( cuidado( 2,data( 2,1,2018 ),2,6,'investigacao',xpto444,'Hospital Privado de Braga' ) ).
 excecao( cuidado( 2,data( 2,1,2018 ),2,6,'investigacao',xpto444,'Hospital de Braga') ).
-excecao( cuidado( A,B,C,D,E,_,G ) ) :- cuidado( A,B,C,D,E,F,G ),
-								nuloI( F ).
+excecao( cuidado( A,B,C,D,E,_,G ) ) :- cuidado( A,B,C,D,E,xpto444,G ).
+
 %-------- Invariante de nulo interdito ---------------
 +cuidado( O,A,B,C,D,E,F ) :: ( solucoes( N,( cuidado( 2,N,_,T,_,X,_ ),nao( nuloI( X ) ) ),L ),
 					comprimento( L,Aux ),
@@ -218,16 +205,15 @@ excecao( cuidado( A,B,C,D,E,_,G ) ) :- cuidado( A,B,C,D,E,F,G ),
 cuidado( 3,data( 1,2,2018 ),3,7,xpto908,50,'Hospital de Braga' ).
 cuidado( 3,data( 1,2,2018 ),3,7,xpto908,50,'Hospital de Guimaraes' ).
 nuloD( xpto908 ).
-excecao( cuidado( A,L,C,D,E,F,G ) ) :- cuidado( A,L,C,D,B,F,G ),
-                                        nuloD( B ).
+excecao( cuidado( A,L,C,D,E,F,G ) ) :- cuidado( A,L,C,D,xpto908,F,G ),
 excecao( cuidado( 3,data( 1,2,2018 ),3,7,xpto908,50,'Hospital de Braga' ) ).
 excecao( cuidado( 3,data( 1,2,2018 ),3,7,xpto908,50,'Hospital de Guimaraes') ).
 
 
 cuidado( 4,data( 2,2,2018 ),4,8,xpto007,15489,'Hospital de Braga' ).
 nuloI( xpto007 ).
-excecao( cuidado( A,B,C,D,_,F,G ) ) :- cuidado( A,B,C,D,E,F,G ),
-								nuloI( E ).
+excecao( cuidado( A,B,C,D,_,F,G ) ) :- cuidado( A,B,C,D,xpto007,F,G ),
+
 %-------- Invariante de nulo interdito ---------------
 +cuidado( O,A,B,C,D,E,F ) :: ( solucoes( N,( cuidado( 4,N,_,T,X,_,_ ),nao( nuloI( X ) ) ),L ),
 					comprimento( L,Aux ),
@@ -240,8 +226,7 @@ excecao( cuidado( 5,data( 3,3,2018 ),5,9,'exame',25,'Hospital Privado de Braga' 
 
 cuidado( 6,data(3,4,2018),6,10,'medicao',70,xpto424 ).
 nuloD( xpto424 ).
-excecao( cuidado( A,B,C,D,E,F,_ ) ) :- cuidado( A,B,C,D,E,F,G ),
-									   nudoD( G ).
+excecao( cuidado( A,B,C,D,E,F,_ ) ) :- cuidado( A,B,C,D,E,F,xpto424 ).
 
 
 excecao( cuidado( 7,data(4,4,2018),7,1,'exame',69,'Hospital de Guimaraes' ) ).
@@ -256,13 +241,13 @@ excecao( cuidado( 8,data(1,1,2018),8,2,'cirurgia',Custo,'Hospital Privado de Gui
 nuloD(xpto111).
 nuloD(xpto222).
 cuidado(9,data(28,5,2018),0,3,xpto11,xpto222,'Hospital de Guimares').
-excecao(cuidado(A,B,C,D,E,F,G)) :- cuidado(A,B,C,D,xpto111,xpto222,G).
+excecao(cuidado(A,B,C,D,_,_,G)) :- cuidado(A,B,C,D,xpto111,xpto222,G).
 
 
 nuloI(xpto400).
 nuloI(xpto123).
 cuidado(10,xpto400,10,4,rotina,333,xpto123).
-excecao(cuidado(A,B,C,D,E,F,G)) :- cuidado(A,xpto400,C,D,E,F,xpto123).
+excecao(cuidado(A,_,C,D,E,F,_)) :- cuidado(A,xpto400,C,D,E,F,xpto123).
 
 +cuidado( O,A,B,C,D,E,F ) :: ( solucoes( N,( cuidado( 10,X,_,_,_,_,Y ),nao( nuloI( X ) ),nao(nuloI(Y) ) ),L ),
 					comprimento(L,Aux),
@@ -275,19 +260,17 @@ cuidado(11,data(20,5,2018),11,12,cirurgia,100,xpto113).
 cuidado(11,data(20,5,2018),11,12,cirurgia,110,xpto113).
 exececao(cuidado(11,data(20,5,2018),11,12,cirurgia,100,xpto113)).
 exececao(cuidado(11,data(20,5,2018),11,12,cirurgia,110,xpto113)).
-exececao(cuidado(A,B,C,D,E,F,G)) :- cuidado(A,B,C,D,E,F,xpto113).
+exececao(cuidado(A,B,C,D,E,F,_)) :- cuidado(A,B,C,D,E,F,xpto113).
 
 
 cuidado( 12,data( 1,6,2018 ),12,14,'exame',50,xpto168 ).
-excecao( cuidado( ID,D,U,P,Desc,C,I ) ) :-
-	cuidado( ID,D,U,P,Desc,C,xpto168 ).
+excecao( cuidado( ID,D,U,P,Desc,C,_ ) ) :- cuidado( ID,D,U,P,Desc,C,xpto168 ).
 nuloD(xpto168).
 
 cuidado( 13,data( 1,7,2018 ),13,12,'rotina',10,'Hospital do Porto' ).
 
 cuidado( 14,data( 4,7,2018 ),14,11,xpto112,xpto999,'Hospital do Porto' ).
-excecao( cuidado( ID,D,U,P,Desc,C,I ) ) :-
-	cuidado( ID,D,U,P,xpto112,xpto999,I ).
+excecao( cuidado( ID,D,U,P,_,_,I ) ) :- cuidado( ID,D,U,P,xpto112,xpto999,I ).
 nuloI(xpto112).
 nuloD(xpto999).
 
