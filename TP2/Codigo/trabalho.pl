@@ -17,7 +17,7 @@
 :- op( 900,xfy,'::' ).
 :- dynamic utente/4.
 :- dynamic prestador/4.
-:- dynamic cuidado/6.
+:- dynamic cuidado/7.
 :- dynamic instituicao/4.
 
 
@@ -53,10 +53,10 @@ utente( 5,elisabete,26,morada( 'Rua da Ajuda' , 'Vila Nova' , 'Guimaraes' ) ).
 
 
 
-excecao(utente(9,irene,30,morada('Rua dos tolos','Briteiros','Guimaraes')).
-excecao(utente(9,irene,30,morada('Rua dos tolos','S.Clemente','Guimaraes')).
-excecao(utente(9,irene,50,morada('Rua dos tolos','Briteiros','Guimaraes')).
-excecao(utente(9,irene,50,morada('Rua dos tolos','S.Clemente','Guimaraes')).
+excecao(utente(9,irene,30,morada('Rua dos tolos','Briteiros','Guimaraes'))).
+excecao(utente(9,irene,30,morada('Rua dos tolos','S.Clemente','Guimaraes'))).
+excecao(utente(9,irene,50,morada('Rua dos tolos','Briteiros','Guimaraes'))).
+excecao(utente(9,irene,50,morada('Rua dos tolos','S.Clemente','Guimaraes'))).
 utente(10,jacinto,48,morada('Rua da Rua','Braga','Braga')).
 
 excecao(utente(11,marta,34,morada('Rua do Pinheiro','São Lourenço','Braga'))).
@@ -64,7 +64,7 @@ excecao(utente(11,marta,34,morada('Rua do Pinheiro','São Lourenço','Guimaraes'
 excecao(utente(11,mara,34,morada('Rua do Pinheiro','São Lourenço','Braga'))).
 excecao(utente(11,marta,34,morada('Rua do Pinheiro','São Lourenço','Guimaraes'))).
 
-excecao( utente( 12,joaquim,I,morada( ‘Rua do Limoeiro’ , ‘Amais’ , ‘Viana do Castelo’ ) ) ) :-
+excecao( utente( 12,joaquim,I,morada( 'Rua do Limoeiro' , 'Amais' , 'Viana do Castelo' ) ) ) :-
 	I >= 60,
 	I =< 80.
 
@@ -73,12 +73,12 @@ excecao( utente( ID,N,I,L ) ) :-
 	utente( ID,N,I,xpto115 ).
 nulo(xpto115).
 
-+utente( ID,N,I,L ) :: ( solucoes( ID,( utente( 13,N,I,M ),nao( nulo(M) ) ),R )
++utente( ID,N,I,L ) :: ( solucoes( ID,( utente( 13,N,I,M ),nao( nulo(M) ) ),R ),
 						comprimento( R,N ),
 						N==0
 						).
 
-excecao( utente( 12,joaquim,I,morada( ‘Rua dos Loiros’ , ‘Caldelas’ , ‘Guimaraes’ ) ) ) :-
+excecao( utente( 14,diana,I,morada( 'Rua dos Loiros' , 'Caldelas' , 'Guimaraes' ) ) ) :-
 	I >= 8,
 	I =< 12.
 
@@ -127,7 +127,7 @@ excecao( prestador( ID,N,E,L ) ) :-
 	utente( ID,N,xpto171,L ).
 nulo(xpto171).
 
-+prestador( ID,N,E,L ) :: ( solucoes( ID,( prestador( 12,N,I,L ),nao( nulo(I) ) ),R )
++prestador( ID,N,E,L ) :: ( solucoes( ID,( prestador( 12,N,I,L ),nao( nulo(I) ) ),R ),
 							comprimento( R,N ),
 							N==0
 						  ).
@@ -166,7 +166,7 @@ excecao( cuidado( 2,data( 2,1,2018 ),2,6,'investigação',xpto444,'Hospital Priv
 excecao( cuidado( 2,data( 2,1,2018 ),2,6,'investigação',xpto444,'Hospital de Braga') ).
 excecao( cuidado( A,_,_,_,_,_,_ ) ) :- cuidado( A,B,C,D,E,F,G ),
 								nuloI( F ).
--------- Invariante de nulo interdito ---------------
+%-------- Invariante de nulo interdito ---------------
 +cuidado( O,A,B,C,D,E,F ) :: ( solucoes( N,( cuidado( 2,N,_,T,_,X,_ ),nao( nuloI( X ) ) ),L ),
 					comprimento( L,Aux ),
 					Aux == 0
@@ -185,7 +185,7 @@ cuidado( 4,data( 2,2,2018 ),4,8,xpto007,15489,'Hospital de Braga' ).
 nuloI( xpto007 ).
 excecao( cuidado( A,_,_,_,_,_,_ ) ) :- cuidado( A,B,C,D,E,F,G ),
 								nuloI( E ).
--------- Invariante de nulo interdito ---------------
+%-------- Invariante de nulo interdito ---------------
 +cuidado( O,A,B,C,D,E,F ) :: ( solucoes( N,( cuidado( 4,N,_,T,X,_,_ ),nao( nuloI( X ) ) ),L ),
 					comprimento( L,Aux ),
 					Aux == 0
@@ -208,7 +208,7 @@ nuloI(xpto123).
 cuidado(10,xpto400,10,4,rotina,333,xpto123).
 excecao(cuidado(A,B,C,D,E,F,G)) :- cuidado(_,xpto400,_,_,_,_,xpto123).
 
-+cuidado( O,A,B,C,D,E,F ) :: ( solucoes( N,( cuidado( 10,X,_,_,_,_,Y ),nao( nuloI( X ),nao(nuloI(Y) ) ),L ),
++cuidado( O,A,B,C,D,E,F ) :: ( solucoes( N,( cuidado( 10,X,_,_,_,_,Y ),nao( nuloI( X ),nao(nuloI(Y) ) ) ),L ),
 					comprimento(L,Aux),
 					Aux == 0
 					).
@@ -231,7 +231,7 @@ excecao( cuidado( ID,D,U,P,Desc,C,I ) ) :-
 	cuidado( ID,D,U,P,xpto112,xpto999,I ).
 nulo(xpto112).
 
-+cuidado( ID,D,U,P,Desc,C,I ) :: ( solucoes( ID,( cuidado( 14,D,U,P,Des,C,I ),nao( nulo(Des) ) ),R )
++cuidado( ID,D,U,P,Desc,C,I ) :: ( solucoes( ID,( cuidado( 14,D,U,P,Des,C,I ),nao( nulo(Des) ) ),R ),
 								   comprimento( R,N ),
 								   N==0
 						  	     ).
@@ -367,31 +367,22 @@ validaInstituicao([C|L]) :-
 	instituicao(C, _, _, _),
 	validaInstituicao(L).
 
-%--------------- Não se pode remover uma instituicao para a qual existam prestadores ---------------------
--instituicao( I,C,T,LE ) :: (solucoes( P,( prestador( P,_,_,LI ),pertence( I,LI ) ),L),
-							comprimento( L,X ),
-							X==0).
-
-%--------------- Não se pode remover uma instituicao para a qual existam cuidados ---------------------
--instituicao( I,C,T,LE ) :: (solucoes( P,prestador( _,P,_,_,_,I ),L),
-							comprimento( L,X ),
-							X==0).
 
 
 %-------------------- Invariantes de conhecimento imperfeito ----------------------------------------
 
 % ----- Não pode haver conhecimento negativo igual aquele cuidado se queremos adicionar positivo -------------
-+cuidado( Id,Data,U,P,D,C,I ) :: (solucoes( A,-cuidado( Id,Data,U,P,D,C,I ),L )
++cuidado( Id,Data,U,P,D,C,I ) :: (solucoes( A,-cuidado( Id,Data,U,P,D,C,I ),L ),
 									comprimento( L,N ),
 									N == 0). 
 
 % ----- Não pode haver conhecimento positivo igual aquele cuidado se queremos adicionar negativo -------------
-+( -cuidado( Id,Data,U,P,D,C,I ) ) :: (solucoes( A,cuidado( Id,Data,U,P,D,C,I ),L )
++( -cuidado( Id,Data,U,P,D,C,I ) ) :: (solucoes( A,cuidado( Id,Data,U,P,D,C,I ),L ),
 									comprimento( L,N ),
 									N == 0). 
 
 % ----- Não pode haver conhecimento negativo igual aquele cuidado se queremos adicionar negativo -------------
-+( -cuidado( Id,Data,U,P,D,C,I ) ) :: (solucoes( A,-cuidado( Id,Data,U,P,D,C,I ),L )
++( -cuidado( Id,Data,U,P,D,C,I ) ) :: (solucoes( A,-cuidado( Id,Data,U,P,D,C,I ),L ),
 									comprimento( L,N ),
 									N == 0). 
 
