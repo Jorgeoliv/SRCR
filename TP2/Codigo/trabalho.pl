@@ -32,8 +32,10 @@ excecao( utente( 2,bruno,35,morada( 'Rua do Louro' , 'Caldelas' , 'Guimaraes' ) 
 
 
 
-utente( 3,carlos,xpto732,xpto336 ).
-excecao( utente( A,_,_,_ ) ) :- utente( A,_,xpto732,_ ).
+utente( 3,carlos,xpto497,xpto336 ).
+nuloD( xpto497 ).
+excecao( utente( A,_,_,_ ) ) :- utente( A,_,B,_ ),
+                                nuloD( B ).
 nuloI( xpto336 ).
 excecao( utente( A,_,_,_ ) ) :- utente( A,B,C,D ),
 								nuloI( C ).
@@ -92,9 +94,11 @@ prestador( 1,antonio,urologia,'Hospital de Guimarães' ).
 prestador( 2,bernardo,ortopedia,'Hospital Privado de Guimarães' ).
 
 
-prestador( 3,carla,xpto732,'Hospital de Guimarães' ).
-excecao( prestador( A,B,C,D ) ) :- prestador( A,_,xpto732,_ ).
-
+prestador( 3,carla,xpto789,'Hospital de Guimarães' ).
+nuloD( xpto789 ).
+excecao( prestador( A,B,C,D ) ) :- prestador( A,_,B,_ ),
+                                    nuloD( B ).
+                                    
 prestador( 4,dalila,neurologia,xpto123 ).
 nuloI( xpto123 ).
 excecao( prestador( A,_,_,_ ) ) :- prestador( A,B,C,D ),
@@ -169,8 +173,10 @@ excecao( cuidado( A,_,_,_,_,_,_ ) ) :- cuidado( A,B,C,D,E,F,G ),
 					).
 
 
-cuidado( 3,data( 1,2,2018 ),3,7,xpto732,50,{'Hospital de Braga', 'Hospital de Guimaraes'} ).
-excecao( cuidado( A,B,C,D,E,F,G ) ) :- cuidado( A,_,_,_,xpto732,_,_ ).
+cuidado( 3,data( 1,2,2018 ),3,7,xpto908,50,{'Hospital de Braga', 'Hospital de Guimaraes'} ).
+nuloD( xpto908 ).
+excecao( cuidado( A,B,C,D,E,F,G ) ) :- cuidado( A,_,_,_,B,_,_ ),
+                                        nuloD( B ).
 excecao( cuidado( 3,data( 1,2,2018 ),3,7,xpto732,50,'Hospital de Braga' ) ).
 excecao( cuidado( 3,data( 1,2,2018 ),3,7,xpto732,50,'Hospital de Guimaraes') ).
 
