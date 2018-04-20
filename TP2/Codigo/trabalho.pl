@@ -20,6 +20,18 @@
 :- dynamic cuidado/7.
 :- dynamic instituicao/4.
 
+-utente(ID,N,I,M) :-
+	nao( utente(ID,N,I,M) ),
+	nao( excecao( utente( ID,N,I,M ) ) ).
+
+
+-prestador(ID,N,E,I) :-
+	nao( prestador(ID,N,E,I) ),
+	nao( excecao( prestador( ID,N,E,I ) ) ).
+
+-cuidado(ID,D,U,P,Desc,C,I) :-
+	nao( cuidado(ID,D,U,P,Desc,C,I) ),
+	nao( excecao( cuidado(ID,D,U,P,Desc,C,I) ) ).
 
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
 % Extensao do predicado utente: IdUt, Nome, Idade, Morada -> {V,F}
@@ -124,7 +136,7 @@ prestador(nueria,dermatologia,'Hospital do Porto').
 
 prestador( 12,joao,xpto171,'Hospital do Porto' ).
 excecao( prestador( ID,N,E,L ) ) :-
-	utente( ID,N,xpto171,L ).
+	prestador( ID,N,xpto171,L ).
 nulo(xpto171).
 
 +prestador( ID,N,E,L ) :: ( solucoes( ID,( prestador( 12,N,I,L ),nao( nulo(I) ) ),R ),
