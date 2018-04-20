@@ -24,16 +24,67 @@
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
 % Extensao do predicado utente: IdUt, Nome, Idade, Morada -> {V,F}
 
-utente( 1,ana,14,morada( 'Rua do Louro','Caldas das Taipas','Guimaraes' ) ).
-utente( 2,luis,13,morada( 'Rua do Azevinho','Braga','Braga' ) ).
-utente( 3,joao,13,morada( 'Rua do Rual','São João de Ponte','Guimaraes' ) ).
+utente( 1,ana,20,morada( 'Rua do Louro','Caldelas','Guimaraes' ) ).
+
+
+excecao( utente( 2,bruno,25,morada( 'Rua do Louro' , 'Caldelas' , 'Guimaraes' ) ) ).
+excecao( utente( 2,bruno,35,morada( 'Rua do Louro' , 'Caldelas' , 'Guimaraes' ) ) ).
+
+
+
+utente( 3,carlos,xpto732,xpto336 ).
+excecao( utente( A,_,_,_ ) ) :- utente( A,_,xpto732,_ ).
+nuloI( xpto336 ).
+excecao( utente( A,_,_,_ ) ) :- utente( A,B,C,D ),
+								nuloI( C ).
+
++utente( O,B,C,D ) :: ( solucoes( N,( utente( 3,N,X,T ),nao( nuloI( X ) ) ),L ),
+					comprimento( L,Aux ),
+					Aux == 0
+					).
+
+
+utente( 4,duarte,35,morada( 'Rua dos Loiros' , 'Caldelas' , 'Guimaraes' ) ).
+
+
+utente( 5,elisabete,26,morada( 'Rua da Ajuda' , 'Vila Nova' , 'Guimaraes' ) ).
+
+
+
+
+
+
+
 
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
 % Extensao do predicado prestador: IdPrest, Nome, Especialidade, Instituição -> {V,F}
 
-prestador( 1,jose,'ortopedia',['Hospital de Braga'] ).
-prestador( 2,joao,'urologia',['Hospital de Guimaraes'] ).
-prestador( 3,jorge,'neurologia',['Hospital de Guimaraes'] ).
+prestador( 1,antonio,urologia,'Hospital de Guimarães' ).
+
+
+prestador( 2,bernardo,ortopedia,'Hospital Privado de Guimarães' ).
+
+
+prestador( 3,carla,xpto732,'Hospital de Guimarães' ).
+excecao( prestador( A,B,C,D ) ) :- prestador( A,_,xpto732,_ ).
+
+prestador( 4,dalila,neurologia,xpto123 ).
+nuloI( xpto123 ).
+excecao( prestador( A,_,_,_ ) ) :- prestador( A,B,C,D ),
+								nuloI( D ).
+
+
++prestador( O,B,C,D ) :: ( solucoes( N,( prestador( 4,N,X,T ),nao( nuloI( X ) ) ),L ),
+					comprimento( L,Aux ),
+					Aux == 0
+					).
+
+
+prestador( 5,ermelinda,enfermeira,'Hospital de Braga' ).
+
+
+
+
 
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
 % Extensao do predicado cuidado: Data, IdUt, IdPrest, Descrição, Custo, Instituição -> {V,F}
