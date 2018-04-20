@@ -51,7 +51,34 @@ utente( 5,elisabete,26,morada( 'Rua da Ajuda' , 'Vila Nova' , 'Guimaraes' ) ).
 
 
 
+excecao(utente(9,irene,30,morada('Rua dos tolos','Briteiros','Guimaraes')).
+excecao(utente(9,irene,30,morada('Rua dos tolos','S.Clemente','Guimaraes')).
+excecao(utente(9,irene,50,morada('Rua dos tolos','Briteiros','Guimaraes')).
+excecao(utente(9,irene,50,morada('Rua dos tolos','S.Clemente','Guimaraes')).
+utente(10,jacinto,48,morada('Rua da Rua','Braga','Braga')).
 
+excecao(utente(11,marta,34,morada('Rua do Pinheiro','São Lourenço','Braga'))).
+excecao(utente(11,marta,34,morada('Rua do Pinheiro','São Lourenço','Guimaraes'))).
+excecao(utente(11,mara,34,morada('Rua do Pinheiro','São Lourenço','Braga'))).
+excecao(utente(11,marta,34,morada('Rua do Pinheiro','São Lourenço','Guimaraes'))).
+
+excecao( utente( 12,joaquim,I,morada( ‘Rua do Limoeiro’ , ‘Amais’ , ‘Viana do Castelo’ ) ) ) :-
+	I >= 60,
+	I =< 80.
+
+utente( 13,marcelo,45,xpto115 ).
+excecao( utente( ID,N,I,L ) ) :-
+	utente( ID,N,I,xpto115 ).
+nulo(xpto115).
+
++utente( ID,N,I,L ) :: ( solucoes( ID,( utente( 13,N,I,M ),nao( nulo(M) ) ),R )
+						comprimento( R,N ),
+						N==0
+						).
+
+excecao( utente( 12,joaquim,I,morada( ‘Rua dos Loiros’ , ‘Caldelas’ , ‘Guimaraes’ ) ) ) :-
+	I >= 8,
+	I =< 12.
 
 
 
@@ -82,6 +109,41 @@ excecao( prestador( A,_,_,_ ) ) :- prestador( A,B,C,D ),
 
 prestador( 5,ermelinda,enfermeira,'Hospital de Braga' ).
 
+excecao(prestador(iglesias,urologia,'Hospital Privado de Braga')).
+excecao(prestador(iglesias,patologia,'Hospital Privado de Braga')).
+
+excecao(prestador(A,B,C,D)) :- prestador(A,B,C,xpto423).
+prestador(josefina,patologia,xpto423).
+
+prestador(nueria,dermatologia,'Hospital do Porto').
+
+
+prestador( 12,joao,xpto171,'Hospital do Porto' ).
+excecao( prestador( ID,N,E,L ) ) :-
+	utente( ID,N,xpto171,L ).
+nulo(xpto171).
+
++prestador( ID,N,E,L ) :: ( solucoes( ID,( prestador( 12,N,I,L ),nao( nulo(I) ) ),R )
+							comprimento( R,N ),
+							N==0
+						  ).
+
+excecao( prestador( 13,julia,E,L ) ) :-
+	E == neurocirurgia,
+	L == 'Hospital do Porto'.
+excecao( prestador( 13,julia,E,L ) ) :-
+	E == neurocirurgia,
+	L == 'Hospital de Guimaraes'.
+excecao( prestador( 13,julia,E,L ) ) :-
+	E == neurologia,
+	L == 'Hospital do Porto'.
+excecao( prestador( 13,julia,E,L ) ) :-
+	E == neurologia,
+	L == 'Hospital de Guimaraes'.
+
+prestador( 14,renato,xpto145,xpto167 ).
+excecao( prestador( ID,N,E,L ) ) :-
+	prestador( ID,N,xpto145,xpto167 ).
 
 
 
@@ -89,11 +151,88 @@ prestador( 5,ermelinda,enfermeira,'Hospital de Braga' ).
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
 % Extensao do predicado cuidado: Data, IdUt, IdPrest, Descrição, Custo, Instituição -> {V,F}
 
-cuidado( data( 2018,3,14,20 ),1,1,'curativo',23,'Hospital de Braga'  ).
-cuidado( data( 2018,3,10,20 ),2,3,'rotina',23,'Hospital de Guimaraes' ).
-cuidado( data( 2018,3,10,20 ),3,3,'rotina',23,'Hospital de Guimaraes' ).
-cuidado( data( 2018,2,10,20 ),2,1,'emergência',23,'Hospital de Braga' ).
-cuidado( data( 2018,3,15,20 ),3,3,'curativo',34,'Hospital de Guimaraes' ).
+excecao( cuidado( 1,D,1,5,'curativo',10,'Hospital de Braga' ) ) :- 
+													comparaData( >=,D,data( 1,1,2018 ) ),
+													comparaData( <=,D,data( 5,1,2018 ) ).
+
+
+cuidado( 2,data( 2,1,2018 ),2,6,'investigação',xpto444,{'Hospital Privado de Braga', 'Hospital de Braga'} ).
+nuloI( xpto444 ).
+excecao( cuidado( 2,data( 2,1,2018 ),2,6,'investigação',xpto444,'Hospital Privado de Braga' ) ).
+excecao( cuidado( 2,data( 2,1,2018 ),2,6,'investigação',xpto444,'Hospital de Braga') ).
+excecao( cuidado( A,_,_,_,_,_,_ ) ) :- cuidado( A,B,C,D,E,F,G ),
+								nuloI( F ).
+-------- Invariante de nulo interdito ---------------
++cuidado( O,A,B,C,D,E,F ) :: ( solucoes( N,( cuidado( 2,N,_,T,_,X,_ ),nao( nuloI( X ) ) ),L ),
+					comprimento( L,Aux ),
+					Aux == 0
+					).
+
+
+cuidado( 3,data( 1,2,2018 ),3,7,xpto732,50,{'Hospital de Braga', 'Hospital de Guimaraes'} ).
+excecao( cuidado( A,B,C,D,E,F,G ) ) :- cuidado( A,_,_,_,xpto732,_,_ ).
+excecao( cuidado( 3,data( 1,2,2018 ),3,7,xpto732,50,'Hospital de Braga' ) ).
+excecao( cuidado( 3,data( 1,2,2018 ),3,7,xpto732,50,'Hospital de Guimaraes') ).
+
+
+cuidado( 4,data( 2,2,2018 ),4,8,xpto007,15489,'Hospital de Braga' ).
+nuloI( xpto007 ).
+excecao( cuidado( A,_,_,_,_,_,_ ) ) :- cuidado( A,B,C,D,E,F,G ),
+								nuloI( E ).
+-------- Invariante de nulo interdito ---------------
++cuidado( O,A,B,C,D,E,F ) :: ( solucoes( N,( cuidado( 4,N,_,T,X,_,_ ),nao( nuloI( X ) ) ),L ),
+					comprimento( L,Aux ),
+					Aux == 0
+					).
+
+
+excecao( cuidado( 5,data( 3,3,2018 ),5,9,'rotina',25,'Hospital Privado de Braga' ) ).
+excecao( cuidado( 5,data( 3,3,2018 ),5,9,'exame',25,'Hospital Privado de Braga' ) ).
+
+
+
+nulo(xpto111).
+nulo(xpto222).
+cuidado(9,data(28,5,2018),0,3,xpto11,xpto222,'Hospital de Guimares').
+excecao(cuidado(A,B,C,D,E,F,G)) :- cuidado(_,_,_,xpto111,xpto222,_).
+
+
+nuloI(xpto400).
+nuloI(xpto123).
+cuidado(10,xpto400,10,4,rotina,333,xpto123).
+excecao(cuidado(A,B,C,D,E,F,G)) :- cuidado(_,xpto400,_,_,_,_,xpto123).
+
++cuidado( O,A,B,C,D,E,F ) :: ( solucoes( N,( cuidado( 10,X,_,_,_,_,Y ),nao( nuloI( X ),nao(nuloI(Y) ) ),L ),
+					comprimento(L,Aux),
+					Aux == 0
+					).
+
+
+nulo(xpto113).
+exececao(cuidado(11,data(20,5,2018),11,12,cirurgia,100,xpto113)).
+exececao(cuidado(11,data(20,5,2018),11,12,cirurgia,110,xpto113)).
+exececao(cuidado(A,B,C,D,E,F,G)) :- cuidado(_,_,_,_,_,_,xpto113).
+
+
+cuidado( 12,data( 1,6,2018 ),12,14,'exame',50,xpto168 ).
+excecao( cuidado( ID,D,U,P,Desc,C,I ) ) :-
+	cuidado( ID,D,U,P,Desc,C,xpto168 ).
+
+cuidado( 13,data( 1,7,2018 ),13,12,'rotina',10,'Hospital do Porto' ).
+
+cuidado( 14,data( 4,7,2018 ),14,11,xpto112,xpto999,'Hospital do Porto' ).
+excecao( cuidado( ID,D,U,P,Desc,C,I ) ) :-
+	cuidado( ID,D,U,P,xpto112,xpto999,I ).
+nulo(xpto112).
+
++cuidado( ID,D,U,P,Desc,C,I ) :: ( solucoes( ID,( cuidado( 14,D,U,P,Des,C,I ),nao( nulo(Des) ) ),R )
+								   comprimento( R,N ),
+								   N==0
+						  	     ).
+
+
+
+
 
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
 % Extensao do predicado instituição: Nome, Cidade, Tipo, ListaEspecialidade -> {V,F}
